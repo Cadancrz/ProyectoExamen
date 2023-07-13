@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Cadancrz/ProyectoExamen/issues"
   },
-  "homepage": "https://github.com/Cadancrz/ProyectoExamen#readme"
+  "homepage": "https://github.com/Cadancrz/ProyectoExamen#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
