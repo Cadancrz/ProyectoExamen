@@ -36,9 +36,9 @@ app.post('/adduser', (req, res) => {
 });
 
 
-
+app.use(express.static('statics'))
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/view/index.html');
+    res.sendFile(__dirname + '/views/index.html');
 });
 
 
