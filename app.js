@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 
-
+app.set('view engine', 'ejs');
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -45,7 +45,7 @@ app.post('/login', (req, res) => {
     const { email, password } = req.body;
   
     // Consultar la base de datos para verificar si el nombre de usuario y contraseña coinciden con un registro de usuario
-    db.query('SELECT rol FROM usuarios WHERE email = ? AND password = ?', [email, password], (error, results) => {
+    db.query('SELECT nombre, rol FROM usuarios WHERE email = ? AND password = ?', [email, password], (error, results) => {
       if (error) {
         console.error(error);
         return res.redirect('/error'); // Manejar el error de la consulta a la base de datos
@@ -60,7 +60,9 @@ app.post('/login', (req, res) => {
     
       // Check the role and redirect to the corresponding menu page
       if (user.rol === 'docente') {
-        res.redirect('/menudocente');
+        // Redirección a menudocente con los parámetros de email y rol
+         res.redirect(`/menudocente?nombre=${encodeURIComponent(user.nombre)}&rol=${encodeURIComponent(user.rol)}`);
+
       } else if (user.rol === 'estudiante') {
         res.redirect('/menuestudiante');
       } else {
@@ -71,13 +73,15 @@ app.post('/login', (req, res) => {
   
   
   app.get('/menudocente', (req, res) => {
-    // Render the menudocente.html file
-    res.sendFile(__dirname + '/views/menudocente.html');
+    const { nombre, rol } = req.query;
+    res.render('menudocente', { nombre, rol });
   });
+  
+  
   
   app.get('/menuestudiante', (req, res) => {
     // Render the menuestudiante.html file
-    res.sendFile(__dirname + '/views/menuestudiante.html');
+    res.sendFile(__dirname + '/views/menuestudiante.ejs');
   });
   
 //----------------------------------------------------------------
@@ -88,7 +92,7 @@ app.get('/login', (req, res) => {
   });
   
   app.get('/addUserForm', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/addUserForm.html'));
+    res.sendFile(path.join(__dirname, '/views/addUserForm.ejs'));
   });
 
 app.use(express.static('statics'))
