@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styleauf.css">
+    
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="app">
+
+		<div class="bg"></div>
+
+		<form action="http://localhost:4200/adduser" method="post">
+			<header>
+				<img src="img/imagen1.png">
+			</header>
+
+			<div class="inputs">
+
+                <input type="text" name="nombre" placeholder="nombre de usuario">
+				<input type="text" name="email" placeholder="correo">
+				<input type="password" name="password" placeholder="contraseña">
+                <select name="rol">
+                    <option value="estudiante">Estudiante</option>
+                    <option value="docente">Docente</option>
+                  </select>
+
+				<p class="light"><a href="#">Forgot password?</a></p>
+			</div>
+            <button>Continue</button>
+		</form>
+
+		<footer>
+			
+			<p>Don't have an account? <a href="#">Sign Up</a></p>
+		</footer>
+
+
+	</div>
+</body>
+</html>
