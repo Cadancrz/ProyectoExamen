@@ -1,5 +1,5 @@
 const db = require('./../bd');
-const session = require('express-session');
+
 
 
 exports.adduser=(req,res)=>{
@@ -18,51 +18,23 @@ exports.adduser=(req,res)=>{
 
 exports.listarUSR=(req, res)=>{
 
-    const consultaSQL = 'SELECT  usr.Nombre_completo, usr.Correo, usr.Identidad, rol.Descripcion FROM usr left join  rol ON  usr.Rol_idRol = rol.idRol';
+   // Consulta a la base de datos para obtener los usuarios
+   const query = 'SELECT * FROM usuarios WHERE rol="estudiante"';
+   
+   db.query(query,(err,result)=>{
+    if(err){
+        throw err
+    }
 
-    db.query(consultaSQL,(err,result)=>{
-        if(err){
-            throw err
-        }
-
-      //console.log(result);
-      
-        res.render('obtenerUsr',{
-            titulo:'USUARIOS:',
-            data: result
-        });
-    })
+  //console.log(result);
+  
+     const users = result;
+     res.render('tablaestudiantes',{
+        titulo:'USUARIOS:',
+        users: result
+    });// Renderiza la vista 'users' y pasa los datos de los usuarios
+   });
 };
 
-exports.delete_usr=(req,res)=>{
 
-    const id = req.query.ID;
-
-    const consultaSQL = 'DELETE FROM usr WHERE idusr='+id+''; 
-
-    db.query(consultaSQL,(err,result)=>{
-            if (err) {
-                throw err
-            }
-            res.status(200).send("Registro eliminado!!!");
-    });  
-
-};
-
-exports.update_usr=(req,res)=>{
-
-        const id = req.query.ID;
-        const data = req.body;
-        const consultaSQL = 'UPDATE USR SET Nombre_completo = "'+data.Nombre_completo+'", Correo = "'+data.Correo+'",Identidad ="'+data.Identidad+'",Rol_idRol='+data.Rol+' WHERE idusr ='+id+' ';
-
-
-        db.query(consultaSQL,(err,resp)=>{
-                if(err){
-                    throw err
-                }
-
-                res.status(200).send("El usuario ha sido actualizado!!!");
-
-        });
-
-};
+ 

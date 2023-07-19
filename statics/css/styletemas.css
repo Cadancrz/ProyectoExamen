@@ -1,0 +1,25 @@
+.crud {
+    width: 100px;
+    vertical-align: middle !important;
+  }
+  .crud a {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px;
+    min-width: 24px;
+    font-size: 1.5em;
+  }
+  
+  .add-new {
+    float: right;
+    margin-bottom: 5px;
+  }
+  
+  #servers_modal table.table td .add {
+    display: inline-block;
+  }
+  
+  #servers_modal table.table .form-control.error {
+    border-color: #f50000;
+  }
+  
