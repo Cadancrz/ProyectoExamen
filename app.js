@@ -1,107 +1,98 @@
-const express = require('express');
-const mysql = require('mysql');
+const express = require("express");
+
+const session = require("express-session");
+const auth = require("./middlewares/autenticated");
+
 const bodyParser = require("body-parser");
+const userController = require("./controllers/userController");
+const loginController = require("./controllers/loginController");
+
 const path = require('path');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
-
 app.set('view engine', 'ejs');
+ 
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Upnfm1234',
-    database: 'proyectocarrera'
-});
+// ---------------------------------------------------------------- CONEXION A LA BASE DE DATOS ----------------------------------------------------------------
 
-db.connect((err) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos:', err);
-        return;
-      }
-      console.log('Conexión exitosa a la base de datos');
-});
 
-// ----------------------------------------------------------------
+// ---------------------------------------------------------------- API DE SIGN UP ----------------------------------------------------------------
 app.post('/adduser', (req, res) => {
     let data = req.body;
-    console.log(data);
+    console.log(data); // Imprimir los datos recibidos desde el formulario
 
-    const consultaSQL = 'INSERT INTO usuarios VALUES (NULL, "'+ data.nombre +'", "'+data.email+'", "'+data.password+'", "'+data.rol+'")';
+    const consultaSQL = 'INSERT INTO usuarios VALUES (NULL, "'+ data.nombre +'", "'+data.email+'", "'+data.password+'", "'+data.rol+'")'; // Query para ingresar los datos del usuario que vienen desde el formulario de adduserform
 
    db.query(consultaSQL, (err,result)=>{
         if(err){
-            throw err;
+            throw err;// si ocurre un error en la consulta a la base de datos, el control se transferirá al bloque de manejo de errores global en Express.js 
         }
-        res.send('Registro guardado con exito');
+        res.sendFile(__dirname + '/views/login.html'); // Enviar respuesta al cliente indicando que el registro se guardó con éxito
    }); 
 });
 
-//----------------------------------------------------------------
+//---------------------------------------------------------------- API DE SIGN IN ----------------------------------------------------------------
 
 // login route handler
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-  
-    // Consultar la base de datos para verificar si el nombre de usuario y contraseña coinciden con un registro de usuario
-    db.query('SELECT nombre, rol FROM usuarios WHERE email = ? AND password = ?', [email, password], (error, results) => {
-      if (error) {
-        console.error(error);
-        return res.redirect('/error'); // Manejar el error de la consulta a la base de datos
-      }
-  
-      if (results.length === 0) {
-        console.log('Usuario no encontrado');
-        return res.redirect('/error'); // Manejar el caso de usuario no encontrado
-      }
-  
-      const user = results[0];
-    
-      // Check the role and redirect to the corresponding menu page
-      if (user.rol === 'docente') {
-        // Redirección a menudocente con los parámetros de email y rol
-         res.redirect(`/menudocente?nombre=${encodeURIComponent(user.nombre)}&rol=${encodeURIComponent(user.rol)}`);
+app.post('/login', loginController);
 
-      } else if (user.rol === 'estudiante') {
-        res.redirect('/menuestudiante');
-      } else {
-        console.log(user.rol);
-      }
-    });
-  });
-  
-  
+
   app.get('/menudocente', (req, res) => {
     const { nombre, rol } = req.query;
-    res.render('menudocente', { nombre, rol });
+    res.render('menudocente', { nombre, rol }); // Renderizar la vista menudocente pasando los valores de nombre y rol
   });
   
   
   
   app.get('/menuestudiante', (req, res) => {
-    // Render the menuestudiante.html file
-    res.sendFile(__dirname + '/views/menuestudiante.ejs');
+    const { nombre, rol } = req.query;
+    res.render('menuestudiante', { nombre, rol });  // Enviar el archivo menuestudiante.ejs
   });
   
-//----------------------------------------------------------------
+
+
+// ---------------------------------------------------------------- API PARA CARGAR LA TABLA DE CUENTAS DE ESTUDIANTES----------------------------------------------------------------
+
+// Ruta para mostrar la tabla de usuarios
+app.get('/tablaestudiantes', (req, res) => {
+  // Consulta a la base de datos para obtener los usuarios
+  const query = 'SELECT * FROM usuarios WHERE rol="estudiante"';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error al obtener los usuarios');
+    }
+    const users = results;
+    res.render('tablaestudiantes', { users }); // Renderiza la vista 'users' y pasa los datos de los usuarios
+  });
+});
+
+//---------------------------------------------------------------- rutas de navegacion --------------------------------------------------------------
 
 app.use(express.static(path.join(__dirname, 'static')));
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/login.html'));
+    res.sendFile(path.join(__dirname, 'views/login.html')); // Enviar el archivo login.html
   });
   
   app.get('/addUserForm', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/addUserForm.ejs'));
+    res.render('addUserForm'); // Enviar el archivo addUserForm.ejs
   });
 
+
+
+
+  app.get('/tablaestudiantes', (req, res) => {
+    res.render('tablaestudiantes'); // Renderizar la vista menudocente pasando los valores de nombre y rol
+  });
+
+  // ---------------------------------------------------------------- GET DE INICIO ----------------------------------------------------------------
 app.use(express.static('statics'))
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/views/login.html');
+    res.sendFile(__dirname + '/views/login.html'); // Enviar al archivo login.html al acceder a la ruta raíz
 });
 
 
 app.listen(4200, () => {
-    console.log('listening on port 4200');
-
+    console.log('listening on port 4200'); // Imprimir en la consola el mensaje 'listening on port 4200'
 });
