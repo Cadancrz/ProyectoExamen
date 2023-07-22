@@ -17,8 +17,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
  
+app.use(session({
+  secret:'clave-secret',
+  resave:false,
+  saveUninitialized:false 
+}));
 
 app.post('/login', loginController.HomePostLogin);
+app.post('/mdocente', auth,loginController.HomePostLogin);
+
 
 app.post('/adduser',userController.adduser);  
 app.get('/listarUSR',userController.listarUSR);
@@ -27,12 +34,12 @@ app.get('/listarTemas',temasController.listarTemas);
 app.post('/inserttema', temasController.inserttema);
   
   app.get('/menudocente', (req, res) => {
-    const { nombre, rol } = req.query;
-    res.render('menudocente', { nombre, rol }); // Renderizar la vista menudocente pasando los valores de nombre y rol
+    const user = req.session.user;
+    res.render('menudocente',{ user }); // Renderizar la vista menudocente pasando los valores de nombre y rol
   });
   app.get('/menuestudiante', (req, res) => {
-    const { nombre, rol } = req.query;
-    res.render('menuestudiante', { nombre, rol });  // Enviar el archivo menuestudiante.ejs
+    const user = req.session.user;
+    res.render('menuestudiante',{ user });  // Enviar el archivo menuestudiante.ejs
   });
 
   app.get('/home',auth,loginController.home);
@@ -47,10 +54,12 @@ app.get('/login', (req, res) => {
   });
   
   app.get('/tablaestudiantes', (req, res) => {
-    res.render('tablaestudiantes'); // Renderizar la vista menudocente pasando los valores de nombre y rol
+    const user = req.session.user;
+    res.render('tablaestudiantes',{ user }); // Renderizar la vista menudocente pasando los valores de nombre y rol
   });
   app.get('/tablatemas', (req, res) => {
-    res.render('tabladetemas'); // Renderizar la vista menudocente pasando los valores de nombre y rol
+    const user = req.session.user;
+    res.render('tabladetemas',{ user }); // Renderizar la vista menudocente pasando los valores de nombre y rol
   });
 
   // ---------------------------------------------------------------- GET DE INICIO ----------------------------------------------------------------

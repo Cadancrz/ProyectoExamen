@@ -24,20 +24,25 @@
           <div class="inputs">
             
             <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" required>
+            <input class="form-input uk-input" type="text" name="nombre" required>
             <br>
             <label for="descripcion">Descripción:</label>
-            <textarea name="descripcion" required></textarea>
+            <input class="form-input uk-input" name="descripcion" required>
             <br>
             <label for="iddocente">ID Docente:</label>
-            <select name="iddocente">
+            <div class="select-style">
+            <select  name="iddocente">
                 <% usuarios.forEach(usuario => { %>
                   <option value="<%= usuario.id %>"><%= usuario.nombre %></option>
                 <% }); %>
               </select>
+
+             
+                
+              </div>
             <br>
           </div>
-            <button type="submit">Guardar</button>
+            <button id="submit"  class="uk-button uk-button-primary uk-button-large uk-width-1-1"  type="submit">Guardar</button>
           
          
           </form>
@@ -51,6 +56,8 @@
                         <tr>
                           <th>ID</th>
                           <th>Tema</th>
+                          <th>Descripción</th>
+                          <th style="visibility:collapse; display:none;">Id_Docente</th>
                           <th>Docente</th>
                         </tr>
                       </thead>
@@ -58,8 +65,10 @@
                     <% temas.forEach((tema) => { %>
                         <tr>
                           <td><%= tema.id %></td>
-                          <td><%= tema.nombre %></td>
-                          <td><%= tema.docente_id %></td>
+                          <td><%= tema.tema %></td>
+                          <td><%= tema.descripcion %></td>
+                          <td style="visibility:collapse; display:none;"><%= tema.docente_id %></td>
+                          <td><%= tema.docente %></td>
                         </tr>
                       <% }) %>
                   </tbody>

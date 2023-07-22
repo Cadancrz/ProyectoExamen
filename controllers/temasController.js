@@ -1,19 +1,22 @@
 const db = require('./../bd');
-
+const session = require('express-session');
 
 
 
 
  exports.listarTemas=(req, res)=>{
+  const userId = req.session.user;
   // Consulta para obtener los temas
-  db.query('SELECT * FROM temas', (errorTemas, resultadosTemas) => {
+  db.query('SELECT * FROM verTemas WHERE docente_id = ?', [userId.id], (errorTemas, resultadosTemas) => {
     if (errorTemas) {
       console.error(errorTemas);
       return res.redirect('menudocente');
     }
+    // Obtener el ID del usuario almacenado en la sesión
 
-    // Consulta para obtener los docentes
-    db.query('SELECT * FROM usuarios WHERE rol="docente"', (errorDocentes, resultadosDocentes) => {
+
+    // Consulta para obtener los docentes filtrando por el id del usuario
+    db.query('SELECT * FROM usuarios WHERE id = ?', [userId.id], (errorDocentes, resultadosDocentes) => {
       if (errorDocentes) {
         console.error(errorDocentes);
         return res.redirect('menudocente');
@@ -35,7 +38,7 @@ const db = require('./../bd');
           console.error(error);
           return res.redirect('/error');
         }
-        res.render('menudocente');
+        return this.listarTemas(req, res);
       }
     );
   };
