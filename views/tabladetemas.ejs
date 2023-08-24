@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styletabla.css">
+    <link rel="stylesheet" href="css/styletemas.css">
+    
+    
+<%- include('./fijos/menu.ejs', {variant:'compact'}) %>
+
+<div class="main-content">
+    <div class="header">
+      <div class="page-display">
+        <h1>LISTA DE TEMAS</h1>
+      </div>
+    </div>
+
+    <hr>
+    <div class="featured-clay">
+
+        <form action="/inserttema" method="POST">
+          <div class="inputs">
+            
+            <label for="nombre">Nombre:</label>
+            <input class="form-input uk-input" type="text" name="nombre" required>
+            <br>
+            <label for="descripcion">Descripción:</label>
+            <input class="form-input uk-input" name="descripcion" required>
+            <br>
+            <label for="iddocente">ID Docente:</label>
+            <div class="select-style">
+            <select  name="iddocente">
+                <% usuarios.forEach(usuario => { %>
+                  <option value="<%= usuario.id %>"><%= usuario.nombre %></option>
+                <% }); %>
+              </select>
+
+             
+                
+              </div>
+            <br>
+          </div>
+            <button id="submit"  class="uk-button uk-button-primary uk-button-large uk-width-1-1"  type="submit">Guardar</button>
+          
+         
+          </form>
+
+
+
+
+                <table class="responstable">
+                
+                    <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Tema</th>
+                          <th>Descripción</th>
+                          <th style="visibility:collapse; display:none;">Id_Docente</th>
+                          <th>Docente</th>
+                        </tr>
+                      </thead>
+                <tbody>
+                    <% temas.forEach((tema) => { %>
+                        <tr>
+                          <td><%= tema.id %></td>
+                          <td><%= tema.tema %></td>
+                          <td><%= tema.descripcion %></td>
+                          <td style="visibility:collapse; display:none;"><%= tema.docente_id %></td>
+                          <td><%= tema.docente %></td>
+                        </tr>
+                      <% }) %>
+                  </tbody>
+                
+                
+                </table>
+    </div>
+    <hr>
+  </div>
+
+</body>
+</html>
